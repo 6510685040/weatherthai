@@ -37,3 +37,18 @@ def get_forecast(city: str):
         raise RuntimeError(f"❌ ไม่สามารถดึงพยากรณ์อากาศของเมือง '{city}' ได้: {message}")
 
     return resp.json()
+
+def get_current_weather(city: str):
+    url = f"{BASE_URL}/weather"
+    params = {
+        "q": city,
+        "appid": API_KEY,
+        "units": "metric",
+        "lang": "th"
+    }
+    response = requests.get(url, params=params)
+
+    if response.status_code != 200:
+        raise Exception(f"Error: {response.json()}")
+
+    return response.json()

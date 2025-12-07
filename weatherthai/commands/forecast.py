@@ -2,8 +2,7 @@ import typer
 from weatherthai.api_client import get_forecast
 from weatherthai.utils import summarize_daily_forecast
 
-
-def forecast(
+def forecast_command(
     city: str = typer.Option(..., help="ชื่อเมืองที่ต้องการดูพยากรณ์อากาศ"),
     days: int = typer.Option(3, help="จำนวนวันที่ต้องการพยากรณ์ (1–5)"),
 ):
