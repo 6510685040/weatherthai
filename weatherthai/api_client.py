@@ -52,3 +52,45 @@ def get_current_weather(city: str):
         raise Exception(f"Error: {response.json()}")
 
     return response.json()
+
+def get_city_coordinates(city: str):
+    """ดึงพิกัด lat/lon ของเมืองจาก OpenWeather"""
+    _require_api_key()
+
+    url = f"{BASE_URL}/weather"
+    params = {
+        "q": city,
+        "appid": API_KEY,
+        "units": "metric",
+        "lang": "th"
+    }
+
+    resp = requests.get(url, params=params, timeout=10)
+
+    if resp.status_code != 200:
+        data = resp.json()
+        raise RuntimeError(f"❌ ไม่พบเมือง '{city}': {data.get('message', resp.text)}")
+
+    json_data = resp.json()
+    return json_data["coord"]["lat"], json_data["coord"]["lon"]
+
+def get_air_quality(city: str):
+    """ดึงข้อมูลคุณภาพอากาศ (Air Pollution)"""
+    _require_api_key()
+
+    lat, lon = get_city_coordinates(city)
+
+    url = f"{BASE_URL}/air_pollution"
+    params = {
+        "lat": lat,
+        "lon": lon,
+        "appid": API_KEY
+    }
+
+    resp = requests.get(url, params=params, timeout=10)
+
+    if resp.status_code != 200:
+        data = resp.json()
+        raise RuntimeError(f"❌ ไม่สามารถดึงคุณภาพอากาศของ '{city}' ได้: {data.get('message', resp.text)}")
+
+    return resp.json()
