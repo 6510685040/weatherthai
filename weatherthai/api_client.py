@@ -94,3 +94,25 @@ def get_air_quality(city: str):
         raise RuntimeError(f"❌ ไม่สามารถดึงคุณภาพอากาศของ '{city}' ได้: {data.get('message', resp.text)}")
 
     return resp.json()
+
+def get_rain_risk(city: str):
+    """ดึงความเสี่ยงฝนตกรายชั่วโมง (ใช้ข้อมูล 3 ชั่วโมงของ OpenWeather Forecast)"""
+    _require_api_key()
+
+    data = get_forecast(city)
+
+    rain_list = []
+
+    for item in data["list"]:
+        dt_txt = item["dt_txt"]              
+        pop = item.get("pop", 0) * 100    
+
+        rain_volume = item.get("rain", {}).get("3h", 0)  # ปริมาณฝนใน 3 ชั่วโมง
+
+        rain_list.append({
+            "time": dt_txt,
+            "pop": round(pop, 1),
+            "rain": rain_volume
+        })
+
+    return rain_list
