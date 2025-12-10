@@ -2,9 +2,14 @@ import typer
 from weatherthai.api_client import get_forecast
 from weatherthai.utils import summarize_daily_forecast
 
-def forecast_command(
-    city: str = typer.Option(..., help="ชื่อเมืองที่ต้องการดูพยากรณ์อากาศ"),
-    days: int = typer.Option(3, help="จำนวนวันที่ต้องการพยากรณ์ (1–5)"),
+def forecast(
+    city: str = typer.Option(
+        ..., "--city", "-c", help="ชื่อเมืองที่ต้องการดูพยากรณ์อากาศ"
+    ),
+    days: int = typer.Option(
+        3, "--days", "-d", min=1, max=5,
+        help="จำนวนวันที่ต้องการพยากรณ์ (1–5)"
+    ),
 ):
     """ดูพยากรณ์อากาศล่วงหน้าของเมือง"""
     data = get_forecast(city)
